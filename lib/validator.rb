@@ -18,7 +18,12 @@ class SmallerGrid
   end
 
   def valid?
-    @rows.flatten == @rows.flatten.uniq
+    if !@rows.flatten.include?("0")
+      @rows.flatten == @rows.flatten.uniq # row doesn't include 0. simply test for duplicates
+    else
+      # row contains 0, remove 0 and then test for duplicates
+      @rows.flatten.join.gsub("0", "").split("") == @rows.flatten.join.gsub("0", "").split("").uniq
+    end
   end
 end
 
