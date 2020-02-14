@@ -41,7 +41,7 @@ class SmallerGrid
 end
 
 class NumberPuzzle
-  attr_accessor :grids, :rows
+  attr_accessor :grids, :rows, :columns, :incomplete
 
   def initialize
     @grids = [
@@ -62,7 +62,9 @@ class NumberPuzzle
     end
 
     # check columns
-
+    if @columns.map { |column| column.gsub("0", "").split("") == column.gsub("0", "").split("").uniq }.include?(false)
+      return false
+    end
 
     return true
   end
@@ -135,18 +137,31 @@ class Validator
     # binding.pry
     parse_puzzle_string
 
+    if @number_puzzle.valid? && !@number_puzzle.incomplete
+      return "This sudoku is valid."
+    elsif @number_puzzle.valid? && @number_puzzle.incomplete
+      return "This sudoku is valid, but incomplete."
+    else
+      return "This sudoku is invalid."
+    end
     # binding.pry
   end
 
   def parse_puzzle_string
+    @number_puzzle.incomplete = self.puzzle_string.include?("0")
     # subgroups from top to bottom
     alignments = self.puzzle_string.split("------+------+------\n")
 
     # all puzzle information
     sets = alignments.map {|x| x.split("\n")}
 
+    # rows
     @number_puzzle.rows = sets.flatten
     @number_puzzle.rows = @number_puzzle.rows.map { |row| row.gsub(" ", "").gsub("|", "") }
+
+    # columns
+    @number_puzzle.columns = @number_puzzle.rows.map { |row| row.split("") }.transpose
+    @number_puzzle.columns = @number_puzzle.columns.map { |x| x.join }
 
     top = sets[0]
     middle = sets[1]
@@ -188,7 +203,7 @@ class Validator
     @number_puzzle.bottom_middle.set(bottom_middle[0], bottom_middle[1], bottom_middle[2])
     @number_puzzle.bottom_right.set(bottom_right[0], bottom_right[1], bottom_right[2])
 
-    binding.pry
+    # binding.pry
   end
 
 end
