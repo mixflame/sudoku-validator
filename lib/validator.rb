@@ -17,7 +17,7 @@ class SmallerGrid
     @rows[2] = bottom
   end
 
-  def valid?
+  def valid? # tests if subgroup is valid
     if !@rows.flatten.include?("0")
       @rows.flatten == @rows.flatten.uniq # row doesn't include 0. simply test for duplicates
     else
@@ -25,10 +25,23 @@ class SmallerGrid
       @rows.flatten.join.gsub("0", "").split("") == @rows.flatten.join.gsub("0", "").split("").uniq
     end
   end
+
+  def top
+    @rows[0]
+  end
+
+  def middle
+    @rows[1]
+  end
+
+  def bottom
+    @rows[2]
+  end
+
 end
 
 class NumberPuzzle
-  attr_accessor :grids
+  attr_accessor :grids, :rows
 
   def initialize
     @grids = [
@@ -36,6 +49,22 @@ class NumberPuzzle
       SmallerGrid.new, SmallerGrid.new, SmallerGrid.new, # MIDDLE
       SmallerGrid.new, SmallerGrid.new, SmallerGrid.new  # BOTTOM
     ]
+  end
+
+  def valid?
+    if @grids.collect { |grid| grid.valid? }.include?(false)
+      # one of the grids of this number puzzle is invalid
+      return false
+    end
+    # check rows, ignoring 0
+    if @rows.map { |row| row.gsub("0", "").split("") == row.gsub("0", "").split("").uniq }.include?(false)
+      return false
+    end
+
+    # check columns
+
+
+    return true
   end
 
   # top row of subgrids
@@ -106,7 +135,7 @@ class Validator
     # binding.pry
     parse_puzzle_string
 
-    binding.pry
+    # binding.pry
   end
 
   def parse_puzzle_string
@@ -115,6 +144,9 @@ class Validator
 
     # all puzzle information
     sets = alignments.map {|x| x.split("\n")}
+
+    @number_puzzle.rows = sets.flatten
+    @number_puzzle.rows = @number_puzzle.rows.map { |row| row.gsub(" ", "").gsub("|", "") }
 
     top = sets[0]
     middle = sets[1]
@@ -155,6 +187,8 @@ class Validator
     @number_puzzle.bottom_left.set(bottom_left[0], bottom_left[1], bottom_left[2])
     @number_puzzle.bottom_middle.set(bottom_middle[0], bottom_middle[1], bottom_middle[2])
     @number_puzzle.bottom_right.set(bottom_right[0], bottom_right[1], bottom_right[2])
+
+    binding.pry
   end
 
 end
