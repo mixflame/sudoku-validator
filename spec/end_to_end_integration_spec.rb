@@ -28,10 +28,10 @@ describe "End-to-end test" do
   end
 
   context "when the sudoku is invalid" do
-    invalid_fixtures = ["spec/fixtures/invalid_due_to_row_dupe.sudoku",
+      invalid_fixtures = ["spec/fixtures/invalid_due_to_row_dupe.sudoku",
                         "spec/fixtures/invalid_due_to_column_dupe.sudoku",
                         "spec/fixtures/invalid_due_to_subgroup_dupe.sudoku"]
-
+                        
     invalid_fixtures.each do |fixture|
       it "returns a string saying so" do
         result = Validator.validate(File.read(fixture))
